@@ -16,6 +16,9 @@ interface NewsDao {
     @Query("SELECT * FROM articles ORDER BY publishedAt DESC")
     fun getArticlesOrderByDate(): PagingSource<Int, Article>
 
+    @Query("SELECT * FROM articles WHERE " + " description LIKE :queryString " + "ORDER BY publishedAt DESC, name ASC")
+    fun searchInArticles(queryString: String): PagingSource<Int, Article>
+
     @Query("DELETE FROM articles")
     fun clearNews()
 

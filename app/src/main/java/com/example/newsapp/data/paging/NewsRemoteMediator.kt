@@ -13,7 +13,7 @@ import retrofit2.HttpException
 import java.io.IOException
 
 @OptIn(ExperimentalPagingApi::class)
-class GithubRemoteMediator(
+class NewsRemoteMediator(
     private val apiQuery: ApiQuery,
     private val country: String?,
     private val language: String?,
