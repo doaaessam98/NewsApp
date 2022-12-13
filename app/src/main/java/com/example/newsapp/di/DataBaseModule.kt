@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import com.example.newsapp.data.source.local.database.NewsDao
 import com.example.newsapp.data.source.local.database.NewsDataBase
+import com.example.newsapp.data.source.local.database.RemoteKeysDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -26,7 +27,9 @@ object DataBaseModule {
     @Singleton
     fun provideNewsDataBase(db:NewsDataBase): NewsDao =db.NewsDao()
 
-
+    @Provides
+    @Singleton
+    fun provideRemoteKeysDataBase(db:NewsDataBase): RemoteKeysDao =db.remoteKeysDao()
 }
 
 

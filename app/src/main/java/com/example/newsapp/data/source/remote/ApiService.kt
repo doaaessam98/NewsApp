@@ -11,10 +11,13 @@ interface ApiService {
 
     @GET("top-headlines")
     suspend fun getNews(
-        @Query("country") country: String = Constants.DEFAULT_LANG,
+        @Query("country") country: String?,
+        @Query("language") language: String?= Constants.DEFAULT_LANG,
         @Query("category") category: String?,
-        @Query("apiKey") api: String = Constants.BASE_URL
-    ): Response<NewsResponse>
+        @Query("apiKey") api: String = Constants.BASE_URL,
+        @Query("page") page: Int,
+       @Query("pageSize") pageSize: Int
+    ): NewsResponse
 
 
 
