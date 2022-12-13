@@ -21,6 +21,7 @@ class GithubRemoteMediator(
     private val service: ApiService,
     private val newsDatabase: NewsDataBase
 
+
 ) : RemoteMediator<Int, Article>() {
     private lateinit var response:NewsResponse
     override suspend fun load(loadType: LoadType, state: PagingState<Int, Article>): MediatorResult {
