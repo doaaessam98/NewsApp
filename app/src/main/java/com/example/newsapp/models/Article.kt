@@ -1,9 +1,10 @@
 package com.example.newsapp.models
 
 
+import androidx.room.Entity
 import com.google.gson.annotations.SerializedName
 
-
+@Entity(tableName = "articles")
 data class Article(
     @SerializedName("author")
     val author: String,
