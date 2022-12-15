@@ -21,40 +21,38 @@ class Repository @Inject constructor(
 
 
 
-     override suspend fun getArticles(
+     override  fun getArticles(
          query: ApiQuery,
          country: String?,
-        language: String?,
+         language: String?,
          category: String?,
-     ): Result<Flow<PagingData<Article>>> {
+     ): Flow<PagingData<Article>> {
 
-        val pagingSourceFactory ={
-            when (query) {
-                is ApiQuery.GetAll ->newsDataBase.NewsDao().getArticlesOrderByDate()
-                is ApiQuery.Search ->newsDataBase.NewsDao().searchInArticles(query.query)
+         val pagingSourceFactory = {
+             when (query) {
+                 is ApiQuery.GetAll -> newsDataBase.NewsDao().getArticlesOrderByDate()
+                 is ApiQuery.Search -> newsDataBase.NewsDao().searchInArticles(query.query)
 
-            }
+             }
 
-        }
+         }
 
-        @OptIn(ExperimentalPagingApi::class)
-        return  try {
+         @OptIn(ExperimentalPagingApi::class)
 
-            val result= Pager(
-                config = PagingConfig(pageSize = NETWORK_PAGE_SIZE, enablePlaceholders = false),
-                remoteMediator = NewsRemoteMediator(
-                    query,
-                    country,
-                    language,
-                    category,
-                    apiService,
-                    newsDataBase
-                ),
-                pagingSourceFactory = pagingSourceFactory
-            ).flow
-            Result.Success(result)
-        }catch (e:Exception){
-            Result.Error(e)
-        }
-    }
+
+         return Pager(
+             config = PagingConfig(pageSize = NETWORK_PAGE_SIZE, enablePlaceholders = false),
+             remoteMediator = NewsRemoteMediator(
+                 query,
+                 country,
+                 language,
+                 category,
+                 apiService,
+                 newsDataBase
+             ),
+             pagingSourceFactory = pagingSourceFactory
+         ).flow
+
+
+     }
 }

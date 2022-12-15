@@ -1,3 +1,37 @@
 <resources>
     <string name="app_name">NewsApp</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="selected_country">Selected Country</string>
+    <string name="selected_category">Selected Ctegory</string>
+    <string name="category_hint">(at least 3 )</string>
+    <string name="next">Next</string>
+    <string name="empty_category_message">please selecte favourite category</string>
+
+
+    <string-array name="countries_name_array">
+        <item>Egypt</item>
+        <item>France</item>
+        <item>Gabon</item>
+        <item>Austria</item>
+        <item>Aruba</item>
+        <item>Spain</item>
+        <item>Argentina</item>
+
+
+    </string-array>
+
+    <string-array name="category_name_array">
+        <item>general</item>
+        <item>business</item>
+        <item>entertainment</item>
+        <item>health</item>
+        <item>science</item>
+        <item>sports</item>
+        <item>technology</item>
+
+
+    </string-array>
+
+
 </resources>

@@ -1,6 +1,7 @@
 package com.example.newsapp.utils
 
 object Constants {
+    const val SORT_BY: String = "publishedAt"
     const val DEFAULT_LANG: String ="US"
     const val BASE_URL = " https://newsapi.org/v2/"
     const val News_STARTING_PAGE_INDEX = 1

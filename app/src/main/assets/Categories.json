@@ -1,0 +1,32 @@
+[
+  {
+    "name": "general",
+    "url": "general"
+  },
+  {
+    "name": "business",
+    "url": "business"
+  },
+  {
+    "name": "entertainment",
+    "url": "entertaniment"
+  },
+  {
+    "name": "health",
+    "url": "health"
+  },
+  {
+    "name": "science",
+    "url": "science"
+  },
+  {
+    "name": "Sports",
+    "url": "sports"
+  },
+
+  {
+    "name": "technology",
+    "url": "technology"
+  }
+
+]

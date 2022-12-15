@@ -51,7 +51,7 @@ class NewsRemoteMediator(
 
                 }
                 is ApiQuery.GetAll-> {
-                   response = service.getNews( country,language,category,page=page, pageSize = state.config.pageSize)
+                   response = service.getNews( country,category,language,page=page, pageSize = state.config.pageSize)
                 }
             }
 

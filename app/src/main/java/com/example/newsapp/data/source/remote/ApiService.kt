@@ -12,8 +12,9 @@ interface ApiService {
     @GET("top-headlines")
     suspend fun getNews(
         @Query("country") country: String?,
-        @Query("language") language: String?= Constants.DEFAULT_LANG,
         @Query("category") category: String?,
+        @Query("language") language: String?= Constants.DEFAULT_LANG,
+        @Query("sortBy") sortParams: String = Constants.SORT_BY,
         @Query("apiKey") api: String = Constants.BASE_URL,
         @Query("page") page: Int,
        @Query("pageSize") pageSize: Int
