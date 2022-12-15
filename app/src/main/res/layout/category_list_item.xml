@@ -10,7 +10,7 @@
 
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/card_item_category"
-            android:layout_width="100dp"
+            android:layout_width="110dp"
             android:layout_height="wrap_content"
             android:backgroundTint="#75075F"
             android:layout_margin="8dp"
@@ -28,8 +28,8 @@
                 android:id="@+id/tv_selected_country"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="13sp"
-                tools:text="sport"
+                android:textSize="14sp"
+                tools:text="entertainment"
                 android:padding="8dp"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"

@@ -103,9 +103,8 @@ class OnBoardingFragment : Fragment() {
 
     private fun navigateToHomeScreen() {
         val  selectedCountryCode :String = (binding.spinner.selectedItem as Country).code
-        Log.e(TAG, "navigateToHomeScreen: ${selectedCountryCode}", )
-        Log.e(TAG, "navigateToHomeScreen: ${selectedCategoryList.size}", )
-      val action = OnBoardingFragmentDirections.actionOnBoardingFragmentToHomeFragment(selectedCountryCode)
+        val categories : Array<String> = selectedCategoryList.toTypedArray()
+        val action = OnBoardingFragmentDirections.actionOnBoardingFragmentToHomeFragment(selectedCountryCode,categories)
       findNavController().navigate(action)
 
 

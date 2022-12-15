@@ -24,7 +24,9 @@
         <argument
             android:name="SelectedCpuntryCode"
             app:argType="string" />
-
+        <argument
+            android:name="selectedCategory"
+            app:argType="string[]" />
 
 
     </fragment>
