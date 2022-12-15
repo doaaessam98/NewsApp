@@ -30,7 +30,7 @@ class MainActivity : AppCompatActivity() {
 
         navController.addOnDestinationChangedListener{ _,destination,_ ->
             when(destination.id){
-                R.id.onBoardingFragment-> {
+                R.id.onBoardingFragment,R.id.homeFragment-> {
                     supportActionBar?.hide()
 
 
