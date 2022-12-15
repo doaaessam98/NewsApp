@@ -1,8 +1,5 @@
 package com.example.newsapp.ui.home
 
-import android.content.ContentValues.TAG
-import android.opengl.Visibility
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,7 +9,7 @@ import com.example.newsapp.models.Category
 import com.example.newsapp.utils.onclick
 
 
-class CategoryTabsAdapter(private var categories :List<Category>, val  onCategoryClick:(String)->Unit) : RecyclerView.Adapter<CategoryTabsAdapter.CategoryViewHolder>(){
+class CategoryTabsAdapter(private var categories: List<Category>, val onCategoryClick:(String)->Unit) : RecyclerView.Adapter<CategoryTabsAdapter.CategoryViewHolder>(){
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CategoryViewHolder {
@@ -32,13 +29,6 @@ class CategoryTabsAdapter(private var categories :List<Category>, val  onCategor
             categories.forEach { category ->
                 category.isSelected = category.name.equals(item.name)
                 checkIsSelectedOrNot(category,holder)
-//                if(category.name.equals(item.name)){
-//                    holder.binding.selectedTab.visibility = View.VISIBLE
-//                    category.isSelected = true
-//                } else{
-//                    holder.binding.selectedTab.visibility =View.GONE
-//                    category.isSelected = false
-//                }
                 //notifyItemChanged(position);
                notifyDataSetChanged();
 

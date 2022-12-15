@@ -1,6 +1,8 @@
 package com.example.newsapp.ui.home
 
+import android.content.ContentValues.TAG
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,25 +16,29 @@ class HomeFragment : Fragment() {
 
   lateinit var binding: FragmentHomeBinding
   lateinit var categoryTabsAdapter: CategoryTabsAdapter
+   private var categories :List<String> = listOf()
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentHomeBinding.inflate(inflater)
+          categories =HomeFragmentArgs.fromBundle(requireArguments()).selectedCategory.toMutableList()
 
          setUpCategoriesView()
+         observeData()
         return binding.root
     }
 
-    private fun setUpCategoriesView() {
-        categoryTabsAdapter = CategoryTabsAdapter(listOf(
-            Category("entertainment","", isSelected = true),
-                    Category("sport",""),
-            Category("health","")
+    private fun observeData() {
 
-        )){
-            // onCategoryClick(it)
-         }
+    }
+
+    private fun setUpCategoriesView() {
+        val categoryList = createCategoryList(categories)
+         categoryList[0].isSelected =true
+        categoryTabsAdapter = CategoryTabsAdapter(categoryList){
+             onCategoryClick(it)
+        }
         binding.rvHomeCategory.apply {
             layoutManager  = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
             adapter=categoryTabsAdapter
@@ -40,6 +46,14 @@ class HomeFragment : Fragment() {
         }
 
 
+    }
+
+    private fun createCategoryList(categories: List<String>): List<Category> {
+        var array:List<Category> = listOf()
+        categories.forEach {
+             array =  array.plus(Category(it,""))
+        }
+        return array
     }
 
     private fun onCategoryClick(selectedCategory: String) {
