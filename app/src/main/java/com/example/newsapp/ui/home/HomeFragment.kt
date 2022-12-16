@@ -103,6 +103,7 @@ class HomeFragment : Fragment() {
         lifecycleScope.launch {
             pagingData.collectLatest{
                 headLineAdapter.submitData(it)
+                binding.rvHeadLine.scrollToPosition(0)
             }
 
         }
@@ -169,7 +170,6 @@ class HomeFragment : Fragment() {
     private fun updateHeadlineListFromInput(adapter: ArticleAdapter, category:String, onCategoryChanged: (UiAction.GetNews) -> Unit) {
               binding.rvHeadLine.scrollToPosition(0)
               onCategoryChanged(UiAction.GetNews(category = category))
-                adapter.retry()
 
 
 

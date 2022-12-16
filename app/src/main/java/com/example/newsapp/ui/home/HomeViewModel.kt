@@ -1,7 +1,5 @@
 package com.example.newsapp.ui.home
 
-import android.content.ContentValues.TAG
-import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -14,13 +12,15 @@ import com.example.newsapp.models.ApiQuery
 import com.example.newsapp.models.UiAction
 import com.example.newsapp.models.UiModel
 import com.example.newsapp.models.UiState
-import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
 import com.example.newsapp.utils.Constants
 import com.example.newsapp.utils.Constants.LAST_CATEGORY_SELECTED
 import com.example.newsapp.utils.Constants.LAST_QUERY_SCROLLED
+import com.example.newsapp.utils.dateFormat
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
 import javax.inject.Inject
+
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val repository: IRepository,
@@ -29,24 +29,24 @@ class HomeViewModel @Inject constructor(
 
 
    // val topHeadlinesFlow  : StateFlow<PagingData<UiModel>>
-   val state :StateFlow<UiState>
-    val headlinespagingDataFlow: Flow<PagingData<UiModel>>
-
+    var selectedCategory :String
+    val state :StateFlow<UiState>
+    val articlePagingDataFlow: Flow<PagingData<UiModel>>
     val onCategoryChange: (UiAction) -> Unit
 
 
 
 
 
+
     init {
-        Log.e(TAG, "init viewmodel: ${Constants. DEFAULT_CATEGORY}", )
-        val initialQuery: String = savedStateHandle.get(LAST_CATEGORY_SELECTED) ?:Constants. DEFAULT_CATEGORY
-        val lastQueryScrolled: String = savedStateHandle.get(LAST_QUERY_SCROLLED) ?: Constants.DEFAULT_CATEGORY
+        selectedCategory = savedStateHandle[LAST_CATEGORY_SELECTED] ?:Constants. DEFAULT_CATEGORY
+        val lastQueryScrolled: String = savedStateHandle[LAST_QUERY_SCROLLED] ?: Constants.DEFAULT_CATEGORY
         val actionStateFlow = MutableSharedFlow<UiAction>()
         val getHeadlines = actionStateFlow
             .filterIsInstance<UiAction.GetNews>()
             .distinctUntilChanged()
-            .onStart { emit(UiAction.GetNews(category = initialQuery)) }
+            .onStart { emit(UiAction.GetNews(category = selectedCategory)) }
         val queriesScrolled = actionStateFlow
             .filterIsInstance<UiAction.Scroll>()
             .distinctUntilChanged()
@@ -56,10 +56,9 @@ class HomeViewModel @Inject constructor(
                 replay = 1
             )
             .onStart { emit(UiAction.Scroll(currentCategory = lastQueryScrolled)) }
-        headlinespagingDataFlow = getHeadlines
-            .flatMapLatest {
+         articlePagingDataFlow = getHeadlines.flatMapLatest {
                 getArticles(ApiQuery.GetAll(it.category),Constants.DEFULT_COUNTRY,"",it.category) }
-            .cachedIn(viewModelScope)
+                .cachedIn(viewModelScope)
 
 
 
@@ -71,12 +70,12 @@ class HomeViewModel @Inject constructor(
         ).map { (headline, scroll) ->
             UiState(
                 category = headline.category,
-                lastQueryScrolled = scroll.currentCategory, headline.category== scroll.currentCategory)
+                lastQueryScrolled = scroll.currentCategory, headline.category!= scroll.currentCategory)
         }
 
             .stateIn(
                 scope = viewModelScope,
-                started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000),
+                started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 1000),
                 initialValue = UiState()
             )
 
@@ -98,7 +97,6 @@ class HomeViewModel @Inject constructor(
             category =category,
             country = country).map {  pagingData ->
               pagingData.map {
-                  Log.e(TAG, "getArticlesvm: $it", )
                   UiModel.ArticleItem(it) }}.map {
 
                   it.insertSeparators { before,after->
@@ -109,12 +107,13 @@ class HomeViewModel @Inject constructor(
                 }
 
                 if (before == null) {
-                    return@insertSeparators UiModel.SeparatorItem("${after.article.publishedAt}")
+                    return@insertSeparators UiModel.SeparatorItem(after.article.publishedAt)
                 }
                 // check between 2 items
-                if (before.article.publishedAt > after.article.publishedAt) {
+                     val com = dateFormat(before.article.publishedAt)!!.compareTo(dateFormat(after.article.publishedAt)!!)
+                      if (com >0) {
 
-                        UiModel.SeparatorItem("${after.article.publishedAt}")
+                        UiModel.SeparatorItem(after.article.publishedAt)
 
                 } else {
 
@@ -127,17 +126,20 @@ class HomeViewModel @Inject constructor(
 
 
 
+    fun addToFavourite(articleUrl:String){
+        viewModelScope.launch {
+            repository.addToFav(url = articleUrl)
+        }
 
+    }
     override fun onCleared() {
-        savedStateHandle[Constants.LAST_CATEGORY_SELECTED] = state.value.category
-        savedStateHandle[Constants.LAST_QUERY_SCROLLED] = state.value.lastQueryScrolled
+        savedStateHandle[LAST_CATEGORY_SELECTED] = state.value.category
+        savedStateHandle[LAST_QUERY_SCROLLED] = state.value.lastQueryScrolled
         super.onCleared()
     }
 
 
 
 
-
-
-
 }
+
