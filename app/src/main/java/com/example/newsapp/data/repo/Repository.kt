@@ -1,5 +1,7 @@
 package com.example.newsapp.data.repo
 
+import android.content.ContentValues.TAG
+import android.util.Log
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
@@ -36,10 +38,8 @@ class Repository @Inject constructor(
              }
 
          }
-
+         Log.e(TAG, "getArticles:${ newsDataBase.NewsDao().getArticlesOrderByDate()} ", )
          @OptIn(ExperimentalPagingApi::class)
-
-
          return Pager(
              config = PagingConfig(pageSize = NETWORK_PAGE_SIZE, enablePlaceholders = false),
              remoteMediator = NewsRemoteMediator(

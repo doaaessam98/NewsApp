@@ -1,5 +1,7 @@
 package com.example.newsapp.data.paging
 
+import android.content.ContentValues.TAG
+import android.util.Log
 import androidx.paging.*
 import androidx.room.withTransaction
 import com.example.newsapp.data.source.local.database.NewsDataBase
@@ -52,6 +54,7 @@ class NewsRemoteMediator(
                 }
                 is ApiQuery.GetAll-> {
                    response = service.getNews( country,category,language,page=page, pageSize = state.config.pageSize)
+                    Log.e(TAG, "loaddata: ${response.articles}", )
                 }
             }
 

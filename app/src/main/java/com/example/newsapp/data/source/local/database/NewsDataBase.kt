@@ -7,7 +7,7 @@ import com.example.newsapp.models.RemoteKeys
 
 @Database(
     entities = [Article::class,RemoteKeys::class],
-    version = 1,
+    version = 4,
     exportSchema = false
 )
 abstract class NewsDataBase :RoomDatabase() {
