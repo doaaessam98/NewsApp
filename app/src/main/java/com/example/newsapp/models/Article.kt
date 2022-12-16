@@ -6,7 +6,6 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
 import javax.annotation.Nullable
-
 @Entity(tableName = "articles")
 data class Article(
 
@@ -27,5 +26,27 @@ data class Article(
     @PrimaryKey
     val url: String="",
     @SerializedName("urlToImage")
-    val urlToImage: String? = ""
+    val urlToImage: String? = "",
+    val isFavourite: Boolean = false,
+   val category :String=""
 )
+
+
+fun List<Article>.toDatabaseModel(category:String):List<Article> {
+    return map {
+        Article(
+            author = it.author,
+            content = it.content,
+            description = it.description,
+            publishedAt = it.publishedAt,
+            source = it.source,
+            title = it.title,
+            url = it.url,
+            urlToImage = it.urlToImage,
+            isFavourite = false,
+            category=category
+        )
+    }
+        .toMutableList()
+}
+

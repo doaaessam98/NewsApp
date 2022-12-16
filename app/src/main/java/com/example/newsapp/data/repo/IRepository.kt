@@ -12,4 +12,9 @@ interface IRepository {
         language: String?,
         category: String?,
     ): Flow<PagingData<Article>>
+
+
+   fun getFavArticle():Flow<List<Article>>
+    suspend fun addToFav(url:String)
+
 }

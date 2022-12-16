@@ -9,7 +9,7 @@ import com.example.newsapp.models.Article
 import com.example.newsapp.models.UiModel
 
 
-class HeadLineAdapter(val onFavClick:(Article)->Unit)
+class ArticleAdapter(val onFavClick:(Article)->Unit)
     : PagingDataAdapter<UiModel, RecyclerView.ViewHolder>(UIMODEL_COMPARATOR) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {

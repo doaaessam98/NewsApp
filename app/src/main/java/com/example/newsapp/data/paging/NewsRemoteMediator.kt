@@ -6,10 +6,7 @@ import androidx.paging.*
 import androidx.room.withTransaction
 import com.example.newsapp.data.source.local.database.NewsDataBase
 import com.example.newsapp.data.source.remote.ApiService
-import com.example.newsapp.models.ApiQuery
-import com.example.newsapp.models.Article
-import com.example.newsapp.models.NewsResponse
-import com.example.newsapp.models.RemoteKeys
+import com.example.newsapp.models.*
 import com.example.newsapp.utils.Constants.News_STARTING_PAGE_INDEX
 import retrofit2.HttpException
 import java.io.IOException
@@ -53,8 +50,8 @@ class NewsRemoteMediator(
 
                 }
                 is ApiQuery.GetAll-> {
-                   response = service.getNews( country,category,language,page=page, pageSize = state.config.pageSize)
-                    Log.e(TAG, "loaddata: ${response.articles}", )
+                   response = service.getNews(country,category,language,page=page, pageSize = state.config.pageSize)
+                    Log.e(TAG, "loaddatannn: ${response.articles}", )
                 }
             }
 
@@ -71,7 +68,8 @@ class NewsRemoteMediator(
                      RemoteKeys(articleUrl = it.url, prevKey = prevKey, nextKey = nextKey)
                  }
                  newsDatabase.remoteKeysDao().insertAll(keys)
-                 newsDatabase.NewsDao().insertAll(article)
+                  val databaseArticle=article.toDatabaseModel(category!!)
+                 newsDatabase.NewsDao().insertAll(databaseArticle)
              }
             return MediatorResult.Success(endOfPaginationReached=endOfPaginationReached)
         } catch (exception: IOException) {

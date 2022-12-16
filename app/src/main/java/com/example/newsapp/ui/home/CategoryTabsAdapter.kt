@@ -1,5 +1,7 @@
 package com.example.newsapp.ui.home
 
+import android.content.ContentValues.TAG
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -22,7 +24,7 @@ class CategoryTabsAdapter(private var categories: List<Category>, val onCategory
       val item = categories[position]
 
         checkIsSelectedOrNot(item,holder)
-
+        Log.e(TAG, "onBindViewHolder: ${item.name}", )
         holder.binding.tvSelectedCountry.text = item.name
         holder.binding.cardItemCategory.onclick{
             onCategoryClick(item.name)

@@ -8,7 +8,8 @@
     <string name="next">Next</string>
     <string name="empty_category_message">please selecte favourite category</string>
     <string name="loading">loading</string>
-    <string name="retry">retry</string>
+    <string name="retry">try aging</string>
+    <string name="no_results">no result</string>
 
 
     <string-array name="countries_name_array">
