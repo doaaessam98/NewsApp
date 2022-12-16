@@ -27,8 +27,15 @@
         <argument
             android:name="selectedCategory"
             app:argType="string[]" />
+        <action
+            android:id="@+id/action_homeFragment_to_favouriteFragment"
+            app:destination="@id/favouriteFragment" />
 
 
     </fragment>
+    <fragment
+        android:id="@+id/favouriteFragment"
+        android:name="com.example.newsapp.ui.favourite.FavouriteFragment"
+        android:label="FavouriteFragment" />
 
 </navigation>

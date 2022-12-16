@@ -30,6 +30,7 @@ class OnBoardingFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentOnBoardingBinding.inflate(inflater)
+        binding.lifecycleOwner = this
            setUpView()
         return binding.root
     }

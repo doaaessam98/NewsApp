@@ -9,16 +9,19 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
 import androidx.paging.PagingData
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.newsapp.R
 import com.example.newsapp.databinding.FragmentHomeBinding
 import com.example.newsapp.models.Category
 import com.example.newsapp.models.UiAction
 import com.example.newsapp.models.UiModel
 import com.example.newsapp.models.UiState
 import com.example.newsapp.utils.Constants
+import com.example.newsapp.utils.onclick
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -35,6 +38,7 @@ class HomeFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentHomeBinding.inflate(inflater)
+        binding.lifecycleOwner = this
          val categories  =HomeFragmentArgs.fromBundle(requireArguments()).selectedCategory.toMutableList()
           viewModel.selectedCategory = categories[0]
           Constants.DEFULT_COUNTRY =HomeFragmentArgs.fromBundle(requireArguments()).selectedCpuntryCode
@@ -44,14 +48,18 @@ class HomeFragment : Fragment() {
             uiActions = viewModel.onCategoryChange
         )
         setUpCategoriesView(articleAdapter,categories,onCategoryChanged = viewModel.onCategoryChange)
-
+        onFavouriteClick()
         return binding.root
     }
 
+    private fun onFavouriteClick() {
+        binding.favouriteImage.onclick {
+            findNavController().navigate(R.id.action_homeFragment_to_favouriteFragment)
+        }
+    }
 
 
-
- private fun   setUpArticleRecycleViewState(
+    private fun   setUpArticleRecycleViewState(
         uiState: StateFlow<UiState>,
         pagingData: Flow<PagingData<UiModel>>,
         uiActions: (UiAction) -> Unit

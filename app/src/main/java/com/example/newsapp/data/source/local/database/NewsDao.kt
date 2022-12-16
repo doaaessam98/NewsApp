@@ -20,7 +20,7 @@ interface NewsDao {
     @Query("SELECT * FROM articles WHERE isFavourite = 1  ORDER BY publishedAt DESC")
     fun getFavArticlesOrderByDate(): Flow<List<Article>>
 
-    @Query("UPDATE  articles set isFavourite = 0 WHERE url =:url")
+    @Query("UPDATE  articles set isFavourite = 1 WHERE url =:url")
     suspend fun addFavourite(url:String)
 
     @Query("SELECT * FROM articles WHERE " + " description LIKE :queryString " + "ORDER BY publishedAt DESC, name ASC")

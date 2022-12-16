@@ -14,7 +14,7 @@ class ArticleAdapter(val onFavClick:(Article)->Unit)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
-            R.layout.headline_list_item -> HeadLineViewHolder.create(parent)
+            R.layout.article_list_item -> ArticleViewHolder.create(parent)
             else -> SeparatorViewHolder.create(parent)
         }
     }
@@ -22,7 +22,7 @@ class ArticleAdapter(val onFavClick:(Article)->Unit)
 
     override fun getItemViewType(position: Int): Int {
         return when (getItem(position)) {
-            is UiModel.ArticleItem -> R.layout.headline_list_item
+            is UiModel.ArticleItem -> R.layout.article_list_item
             is UiModel.SeparatorItem -> R.layout.seperator_view_item
             null -> throw UnsupportedOperationException("Unknown view")
         }
@@ -32,7 +32,7 @@ class ArticleAdapter(val onFavClick:(Article)->Unit)
         val uiModel = getItem(position)
         uiModel?.let { item ->
             when (item) {
-                is UiModel.ArticleItem -> (holder as HeadLineViewHolder).bind(item.article,onFavClick)
+                is UiModel.ArticleItem -> (holder as ArticleViewHolder).bind(item.article,onFavClick)
                 is UiModel.SeparatorItem -> (holder as SeparatorViewHolder).bind(item.date)
 
             }

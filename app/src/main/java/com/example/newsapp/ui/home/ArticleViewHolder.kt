@@ -9,12 +9,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.newsapp.R
-import com.example.newsapp.databinding.HeadlineListItemBinding
-import com.example.newsapp.databinding.SeperatorViewItemBinding
+import com.example.newsapp.databinding.ArticleListItemBinding
 import com.example.newsapp.models.Article
 import com.example.newsapp.utils.onclick
 
-class HeadLineViewHolder(val binding: HeadlineListItemBinding):RecyclerView.ViewHolder(binding.root) {
+class ArticleViewHolder(val binding: ArticleListItemBinding):RecyclerView.ViewHolder(binding.root) {
 
     fun bind(headLine:Article?,onclick:(Article)->Unit) {
         Log.e(TAG, "bindadapter: ${headLine}", )
@@ -31,29 +30,30 @@ class HeadLineViewHolder(val binding: HeadlineListItemBinding):RecyclerView.View
         }
 
     }
-    private fun showRepoData(headLine: Article, onclick: (Article) -> Unit) {
+    private fun showRepoData(article: Article, onclick: (Article) -> Unit) {
         binding. description.visibility = View.VISIBLE
         binding. source.visibility = View.VISIBLE
         binding.btnAddFav.isEnabled = true
-        binding.headline = headLine
+        binding.headline = article
         itemView.onclick {
-            headLine?.url?.let { url ->
+            article?.url?.let { url ->
                 val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
                 itemView.context.startActivity(intent)
             }
         }
 
         binding.btnAddFav.onclick {
-            onclick(headLine)
+
+            onclick(article)
         }
 
     }
 
     companion object {
-        fun create(parent: ViewGroup): HeadLineViewHolder {
+        fun create(parent: ViewGroup): ArticleViewHolder {
             val view =
-                HeadlineListItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-            return HeadLineViewHolder(view)
+                ArticleListItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+            return ArticleViewHolder(view)
         }
     }
 

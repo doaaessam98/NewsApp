@@ -3,18 +3,11 @@ package com.example.newsapp.utils
 import android.content.ContentValues.TAG
 import android.util.Log
 import android.widget.ImageView
+import android.widget.TextView
 import androidx.databinding.BindingAdapter
 import com.bumptech.glide.Glide
 import com.example.newsapp.R
 
-
-//@BindingAdapter("countryImage")
-//fun bindCountryImage(imageView: ImageView) {
-//    val context = imageView.context
-//        imageView.setImageResource()
-//        imageView.contentDescription =""
-//
-//}
 
 
 @BindingAdapter("setImageView")
@@ -42,6 +35,10 @@ fun setImageViewResource(imageView: ImageView, url: String) {
         }
  }
 
+@BindingAdapter("setDateFormat")
+fun bindAArticleDate(textView: TextView,date:String){
+    textView.text= dateFormat(date)
+}
 
 
 
