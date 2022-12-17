@@ -160,10 +160,10 @@ class HomeFragment : Fragment() {
                 headLineAdapter.loadStateFlow.collect { loadState ->
                 header.loadState = loadState.mediator?.refresh?.takeIf {
                     it is LoadState.Error && headLineAdapter.itemCount > 0 } ?: loadState.prepend
-                val isListEmpty = loadState.refresh is LoadState.Error && headLineAdapter.itemCount == 0
+                val isListEmpty = loadState.refresh is LoadState.Error || (headLineAdapter.itemCount == 0&&loadState.source.refresh is LoadState.NotLoading)
                 binding.emptyList.isVisible = isListEmpty
                 binding.rvHeadLine.isVisible =loadState.source.refresh is LoadState.NotLoading || loadState.mediator?.refresh is LoadState.NotLoading
-                binding. progressBar.isVisible = loadState.mediator?.refresh is LoadState.Loading
+                binding. progressBar.isVisible = loadState.mediator?.refresh is LoadState.Loading ||headLineAdapter.itemCount != 0
                 binding.retryButton.isVisible = loadState.mediator?.refresh is LoadState.Error && headLineAdapter.itemCount == 0
 
                 val errorState = loadState.source.append as? LoadState.Error
@@ -269,7 +269,6 @@ class HomeFragment : Fragment() {
         }
     }
     private fun updateHeadlineListFromSearch(query: String, searchData: (UiAction.Search) -> Unit) {
-        Log.e(TAG, "updateHeadlineListFromSearch: $query", )
         binding.rvHeadLine.scrollToPosition(0)
         val searchQuery = "%$query%"
            searchData(UiAction.Search(query=searchQuery))

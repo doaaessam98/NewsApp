@@ -78,16 +78,16 @@ class OnBoardingFragment : Fragment() {
 
     private fun onNextBtnClicked() {
 
-        when{
-                selectedCategoryList.size > 3 ->{
+        if(selectedCategoryList.size<3)
+                {
                     Toast.makeText(requireContext(), R.string.empty_category_message, Toast.LENGTH_SHORT).show()
                   }
 
-              else->{
+              else{
                  navigateToHomeScreen()
              }
 
-    }
+    
     }
 
 

@@ -57,23 +57,23 @@
 
                 <ImageButton
                     android:id="@+id/btn_back"
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
+                    android:layout_width="@dimen/_32sdp"
+                    android:layout_height="@dimen/_32sdp"
                     app:layout_constraintTop_toTopOf="@id/input_layout"
                     app:layout_constraintBottom_toBottomOf="@id/input_layout"
                     app:layout_constraintStart_toStartOf="parent"
                     android:src="@drawable/ic__arrow_back_24"
                     app:tint="@color/white"
                     android:background="@color/category_back_color"
-                    android:layout_marginStart="8dp"
+                    android:layout_marginStart="@dimen/_8sdp"
                     />
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/input_layout"
                     android:layout_width="0dp"
-                    android:layout_height="48dp"
-                    android:layout_marginHorizontal="8dp"
-                    android:layout_marginVertical="16dp"
+                    android:layout_height="@dimen/_48sdp"
+                    android:layout_marginHorizontal="@dimen/_8sdp"
+                    android:layout_marginVertical="@dimen/_16sdp"
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     app:layout_constraintEnd_toStartOf="@id/btn_filter"
                     app:layout_constraintStart_toEndOf="@id/btn_back"
@@ -90,7 +90,8 @@
                         android:inputType="textNoSuggestions"
                         android:selectAllOnFocus="true"
                         android:layout_gravity="center"
-                        android:paddingTop="12dp"
+                        android:paddingTop="@dimen/_12sdp"
+                        android:paddingStart="@dimen/_12sdp"
                         android:textColor="@color/white"
                         android:background="@drawable/search_view_ba"
 
@@ -105,17 +106,17 @@
                     app:layout_constraintTop_toTopOf="@id/input_layout"
                     app:layout_constraintBottom_toBottomOf="@id/input_layout"
                     app:layout_constraintEnd_toEndOf="@id/input_layout"
-                    android:layout_marginEnd="24dp"
+                    android:layout_marginEnd="@dimen/_24sdp"
                     />
 
                 <ImageButton
                     android:id="@+id/btn_filter"
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
+                    android:layout_width="@dimen/_32sdp"
+                    android:layout_height="@dimen/_32sdp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="@id/input_layout"
                     app:layout_constraintBottom_toBottomOf="@id/input_layout"
-                    android:layout_marginHorizontal="16dp"
+                    android:layout_marginHorizontal="@dimen/_16sdp"
                     android:src="@drawable/ic_filter_list_24"
 
                     app:tint="@color/white"
@@ -137,7 +138,7 @@
             tools:listitem="@layout/category_list_item"
             app:layout_constraintTop_toBottomOf="@id/appbar"
             android:orientation="horizontal"
-            android:layout_marginStart="8dp"
+            android:layout_marginStart="@dimen/_8sdp"
             app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
             />
         <androidx.recyclerview.widget.RecyclerView
@@ -146,7 +147,7 @@
             android:layout_height="0dp"
             app:layout_constraintTop_toBottomOf="@id/rv_home_category"
             app:layout_constraintBottom_toBottomOf="parent"
-            android:layout_marginBottom="8dp"
+            android:layout_marginBottom="@dimen/_8sdp"
             tools:listitem="@layout/article_list_item"
             app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
