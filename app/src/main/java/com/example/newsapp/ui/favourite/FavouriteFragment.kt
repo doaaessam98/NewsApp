@@ -25,6 +25,7 @@ class FavouriteFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
          binding =FragmentFavouriteBinding.inflate(inflater)
+        binding.viewModel=viewModel
          binding.lifecycleOwner = this
          setUpView()
          observeData()

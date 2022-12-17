@@ -24,14 +24,13 @@ class CategoryTabsAdapter(private var categories: List<Category>, val onCategory
       val item = categories[position]
 
         checkIsSelectedOrNot(item,holder)
-        Log.e(TAG, "onBindViewHolder: ${item.name}", )
         holder.binding.tvSelectedCountry.text = item.name
         holder.binding.cardItemCategory.onclick{
             onCategoryClick(item.name)
             categories.forEach { category ->
                 category.isSelected = category.name.equals(item.name)
                 checkIsSelectedOrNot(category,holder)
-                //notifyItemChanged(position);
+                notifyItemChanged(position);
                notifyDataSetChanged();
 
 

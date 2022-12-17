@@ -30,6 +30,9 @@
         <action
             android:id="@+id/action_homeFragment_to_favouriteFragment"
             app:destination="@id/favouriteFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_searchFragment"
+            app:destination="@id/searchFragment" />
 
 
     </fragment>
@@ -37,5 +40,9 @@
         android:id="@+id/favouriteFragment"
         android:name="com.example.newsapp.ui.favourite.FavouriteFragment"
         android:label="FavouriteFragment" />
+    <fragment
+        android:id="@+id/searchFragment"
+        android:name="com.example.newsapp.ui.search.SearchFragment"
+        android:label="SearchFragment" />
 
 </navigation>

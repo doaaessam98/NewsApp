@@ -24,7 +24,17 @@
             app:layout_constraintStart_toStartOf="parent"
             setImageView="@{category.url}"
             android:src="@drawable/placeholder_image" />
-
+         <com.google.android.material.imageview.ShapeableImageView
+             android:id="@+id/btn_isSelected"
+             android:layout_width="16dp"
+             android:layout_height="16dp"
+             android:background="@color/category_back_color"
+             app:layout_constraintTop_toTopOf="@id/iv_category"
+             app:layout_constraintEnd_toEndOf="@id/iv_category"
+             android:src="@drawable/ic_check_24"
+             style="@style/customRoundedImageView"
+             android:visibility="gone"
+              />
         <TextView
             android:id="@+id/tv_category"
             android:layout_width="wrap_content"

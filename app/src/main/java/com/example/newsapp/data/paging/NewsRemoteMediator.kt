@@ -7,14 +7,14 @@ import androidx.room.withTransaction
 import com.example.newsapp.data.source.local.database.NewsDataBase
 import com.example.newsapp.data.source.remote.ApiService
 import com.example.newsapp.models.*
+import com.example.newsapp.utils.Constants
 import com.example.newsapp.utils.Constants.News_STARTING_PAGE_INDEX
 import retrofit2.HttpException
 import java.io.IOException
 
 @OptIn(ExperimentalPagingApi::class)
 class NewsRemoteMediator(
-    private val apiQuery: ApiQuery,
-    private val country: String?,
+    private val country: String?=Constants.DEFULT_COUNTRY,
     private val language: String?,
     private val category: String?,
     private val service: ApiService,
@@ -22,7 +22,7 @@ class NewsRemoteMediator(
 
 
 ) : RemoteMediator<Int, Article>() {
-    private lateinit var response:NewsResponse
+
     override suspend fun load(loadType: LoadType, state: PagingState<Int, Article>): MediatorResult {
         val page = when (loadType) {
             LoadType.REFRESH -> {
@@ -45,15 +45,10 @@ class NewsRemoteMediator(
         }
 
         try {
-            when(apiQuery){
-                is ApiQuery.Search->{
+            var response    = service.getNews(country,category,language,page=page, pageSize = state.config.pageSize)
 
-                }
-                is ApiQuery.GetAll-> {
-                   response = service.getNews(country,category,language,page=page, pageSize = state.config.pageSize)
-                    Log.e(TAG, "loaddatannn: ${response.articles}", )
-                }
-            }
+
+
 
             val article = response.articles
             val endOfPaginationReached = article.isEmpty()
@@ -68,7 +63,7 @@ class NewsRemoteMediator(
                      RemoteKeys(articleUrl = it.url, prevKey = prevKey, nextKey = nextKey)
                  }
                  newsDatabase.remoteKeysDao().insertAll(keys)
-                  val databaseArticle=article.toDatabaseModel(category!!)
+                  val databaseArticle=article.toDatabaseModel(category!!,country!!)
                  newsDatabase.NewsDao().insertAll(databaseArticle)
              }
             return MediatorResult.Success(endOfPaginationReached=endOfPaginationReached)

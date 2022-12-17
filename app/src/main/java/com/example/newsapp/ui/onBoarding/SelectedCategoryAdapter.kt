@@ -28,7 +28,9 @@ class SelectedCategoryAdapter( private val onclick:(String)->Unit)
         RecyclerView.ViewHolder(binding.root) {
         fun bind(item: String, onclick: (String) -> Unit) {
             binding.tvSelectedCountry.text = item
-            binding.removeCategory.setOnClickListener { onclick.invoke(item) }
+            binding.removeCategory.setOnClickListener {
+                onclick.invoke(item)
+            }
             binding.executePendingBindings()
         }
 

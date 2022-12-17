@@ -1,6 +1,10 @@
 package com.example.newsapp.ui.home
 
+import android.content.ContentValues.TAG
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,6 +19,7 @@ import androidx.paging.PagingData
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.newsapp.R
+import com.example.newsapp.databinding.FilterBottomSheetBinding
 import com.example.newsapp.databinding.FragmentHomeBinding
 import com.example.newsapp.models.Category
 import com.example.newsapp.models.UiAction
@@ -22,6 +27,8 @@ import com.example.newsapp.models.UiModel
 import com.example.newsapp.models.UiState
 import com.example.newsapp.utils.Constants
 import com.example.newsapp.utils.onclick
+import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.chip.Chip
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -33,6 +40,7 @@ class HomeFragment : Fragment() {
   lateinit var categoryTabsAdapter: CategoryTabsAdapter
   lateinit var articleAdapter: ArticleAdapter
    private val viewModel:HomeViewModel by viewModels()
+     var categoryList = listOf<Category>()
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -45,18 +53,16 @@ class HomeFragment : Fragment() {
            setUpArticleRecycleViewState(
             uiState = viewModel.state,
             pagingData = viewModel.articlePagingDataFlow,
-            uiActions = viewModel.onCategoryChange
+            uiActions = viewModel.onCategoryChange,
+
         )
         setUpCategoriesView(articleAdapter,categories,onCategoryChanged = viewModel.onCategoryChange)
-        onFavouriteClick()
+        setUpSearchView(uiActions = viewModel.onSearchChange)
+        handelTopBarMenuItem()
         return binding.root
     }
 
-    private fun onFavouriteClick() {
-        binding.favouriteImage.onclick {
-            findNavController().navigate(R.id.action_homeFragment_to_favouriteFragment)
-        }
-    }
+
 
 
     private fun   setUpArticleRecycleViewState(
@@ -66,6 +72,7 @@ class HomeFragment : Fragment() {
     ) {
          articleAdapter = ArticleAdapter{
             viewModel.addToFavourite(it.url)
+
         }
         val header = ArticleLoadStateAdapter { articleAdapter.retry() }
 
@@ -108,6 +115,8 @@ class HomeFragment : Fragment() {
         })
 
         handelArticleListState(headLineAdapter,header)
+        handelRecycleScroll(headLineAdapter,uiState)
+
         lifecycleScope.launch {
             pagingData.collectLatest{
                 headLineAdapter.submitData(it)
@@ -116,7 +125,6 @@ class HomeFragment : Fragment() {
 
         }
 
-        handelRecycleScroll(headLineAdapter,uiState)
     }
 
     private fun handelRecycleScroll(headLineAdapter: ArticleAdapter, uiState: StateFlow<UiState>) {
@@ -175,7 +183,7 @@ class HomeFragment : Fragment() {
     }
 
 
-    private fun updateHeadlineListFromInput(adapter: ArticleAdapter, category:String, onCategoryChanged: (UiAction.GetNews) -> Unit) {
+    private fun updateHeadlineListFromInput( category:String, onCategoryChanged: (UiAction) -> Unit) {
               binding.rvHeadLine.scrollToPosition(0)
               onCategoryChanged(UiAction.GetNews(category = category))
 
@@ -185,17 +193,17 @@ class HomeFragment : Fragment() {
     private fun setUpCategoriesView(
         articleAdapter: ArticleAdapter,
         categories: MutableList<String>,
-        onCategoryChanged: (UiAction.GetNews) -> Unit
+        onCategoryChanged: (UiAction) -> Unit
     ) {
-        val categoryList = convert_ListOfString_To_ListOfCategory(categories)
-//           categoryList.forEach {
-//               if( it.name==viewModel.selectedCategory){
-//                   it.isSelected=true
-//                 }
-//           }
+         categoryList = convert_ListOfString_To_ListOfCategory(categories)
+           categoryList.forEach {
+               if( it.name==viewModel.selectedCategory){
+                   it.isSelected=true
+                 }
+           }
         categoryTabsAdapter = CategoryTabsAdapter(categoryList){
-            updateHeadlineListFromInput(adapter = articleAdapter,it,onCategoryChanged)
-             // viewModel.selectedCategory = it
+            updateHeadlineListFromInput(it,onCategoryChanged)
+            viewModel.selectedCategory = it
         }
              binding.rvHomeCategory.apply {
             layoutManager  = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
@@ -212,6 +220,108 @@ class HomeFragment : Fragment() {
         }
         return categoryList
     }
+    private fun handelTopBarMenuItem(){
+
+        binding.topAppBar.setOnMenuItemClickListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.favorite -> {
+                    findNavController().navigate(R.id.action_homeFragment_to_favouriteFragment)
+
+                    true
+                }
+                R.id.search -> {
+                    binding.topAppBar.visibility=View.GONE
+                    binding.searchViewLayout.visibility=View.VISIBLE
+                    true
+                }
+                else -> false
+            }
+        }
+    }
+
+
+    private fun setUpSearchView(uiActions: (UiAction) -> Unit) {
+        setUpFilterButton(uiActions)
+        setUpBackButtonInSearch()
+        binding.searchNews.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable) {}
+
+            override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {
+            }
+            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
+                if(count == 0) {
+                    //searchAdapter.submitList()
+                } else {
+                    val query = binding.searchNews.text.toString()
+                    updateHeadlineListFromSearch(query){
+                       uiActions.invoke(it)
+                    }
+                }
+            }
+        })
+
+        binding.searchImage.setOnClickListener {
+            val query = binding.searchNews.text.toString()
+            updateHeadlineListFromSearch(query){
+                uiActions.invoke(it)
+            }
+
+        }
+    }
+    private fun updateHeadlineListFromSearch(query: String, searchData: (UiAction.Search) -> Unit) {
+        Log.e(TAG, "updateHeadlineListFromSearch: $query", )
+        binding.rvHeadLine.scrollToPosition(0)
+        val searchQuery = "%$query%"
+           searchData(UiAction.Search(query=searchQuery))
+
+
+
+    }
+
+
+    private fun setUpFilterButton(onCategoryChanged: (UiAction) -> Unit) {
+        binding.btnFilter.onclick {
+            showFilterBottomSheet(onCategoryChanged)
+        }
+    }
+    private fun setUpBackButtonInSearch() {
+        binding.btnBack.onclick {
+            binding.topAppBar.visibility=View.VISIBLE
+            binding.searchViewLayout.visibility=View.GONE
+
+        }
+    }
+
+    private fun showFilterBottomSheet(onCategoryChanged: (UiAction) -> Unit) {
+        val bottomSheet = BottomSheetDialog(requireContext(), R.style.BottomSheetDialogTheme)
+        val view: View = layoutInflater.inflate(R.layout.filter_bottom_sheet, null)
+        val bindingBottom = FilterBottomSheetBinding.bind(view)
+        bindingBottom.root
+        bottomSheet.setContentView(view)
+        bottomSheet.show()
+
+        var type :String = viewModel.selectedCategory
+
+        bindingBottom.chipGroupCategory.setOnCheckedChangeListener { group, selectedChipId ->
+            type = group.findViewById<Chip>(selectedChipId).text.toString()
+            categoryList.plus(Category(type,""))
+            categoryTabsAdapter.submitList(categoryList)
+        }
+
+
+        bindingBottom.btnApply.setOnClickListener {
+            if(binding.searchNews.text.toString().isNotEmpty()){
+               updateHeadlineListFromInput(type,onCategoryChanged)
+            }else{
+                Toast.makeText(requireContext(), "please enter text to Search about", Toast.LENGTH_SHORT).show()
+            }
+            bottomSheet.dismiss()
+        }
+
+
+    }
+
+
 
 
 

@@ -16,7 +16,7 @@ import javax.inject.Inject
 @HiltViewModel
 class FavouriteViewModel  @Inject constructor(private val repository: IRepository):ViewModel(){
 
-        val emptyList = MutableStateFlow(true)
+        val emptyList = MutableLiveData(true)
       private val _favourite = MutableStateFlow<List<Article>>(listOf())
         val  favourite : StateFlow<List<Article>> = _favourite
 
@@ -31,7 +31,7 @@ class FavouriteViewModel  @Inject constructor(private val repository: IRepositor
                      when{
                          it.isNotEmpty()-> {
                              _favourite.emit(it)
-                             emptyList.emit(false)
+                             emptyList.value = (false)
                          }
 
                      }

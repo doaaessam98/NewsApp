@@ -1,5 +1,7 @@
 package com.example.newsapp.ui.home
 
+import android.content.ContentValues.TAG
+import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -8,18 +10,20 @@ import androidx.paging.cachedIn
 import androidx.paging.insertSeparators
 import androidx.paging.map
 import com.example.newsapp.data.repo.IRepository
-import com.example.newsapp.models.ApiQuery
 import com.example.newsapp.models.UiAction
 import com.example.newsapp.models.UiModel
 import com.example.newsapp.models.UiState
 import com.example.newsapp.utils.Constants
+import com.example.newsapp.utils.Constants.LAST_SEARCH_QUERY
 import com.example.newsapp.utils.Constants.LAST_CATEGORY_SELECTED
 import com.example.newsapp.utils.Constants.LAST_QUERY_SCROLLED
 import com.example.newsapp.utils.dateFormat
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.math.log
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
@@ -33,7 +37,7 @@ class HomeViewModel @Inject constructor(
     val state :StateFlow<UiState>
     val articlePagingDataFlow: Flow<PagingData<UiModel>>
     val onCategoryChange: (UiAction) -> Unit
-
+    val onSearchChange:(UiAction)->Unit
 
 
 
@@ -41,12 +45,19 @@ class HomeViewModel @Inject constructor(
 
     init {
         selectedCategory = savedStateHandle[LAST_CATEGORY_SELECTED] ?:Constants. DEFAULT_CATEGORY
+        val initialSearchQuery = savedStateHandle[LAST_SEARCH_QUERY] ?: Constants.DEFAULT_SEARCH_QUERY
         val lastQueryScrolled: String = savedStateHandle[LAST_QUERY_SCROLLED] ?: Constants.DEFAULT_CATEGORY
         val actionStateFlow = MutableSharedFlow<UiAction>()
         val getHeadlines = actionStateFlow
             .filterIsInstance<UiAction.GetNews>()
             .distinctUntilChanged()
             .onStart { emit(UiAction.GetNews(category = selectedCategory)) }
+
+        val search = actionStateFlow
+            .filterIsInstance<UiAction.Search>()
+            .distinctUntilChanged()
+            .onStart { emit(UiAction.Search(initialSearchQuery)) }
+
         val queriesScrolled = actionStateFlow
             .filterIsInstance<UiAction.Scroll>()
             .distinctUntilChanged()
@@ -56,9 +67,17 @@ class HomeViewModel @Inject constructor(
                 replay = 1
             )
             .onStart { emit(UiAction.Scroll(currentCategory = lastQueryScrolled)) }
-         articlePagingDataFlow = getHeadlines.flatMapLatest {
-                getArticles(ApiQuery.GetAll(it.category),Constants.DEFULT_COUNTRY,"",it.category) }
-                .cachedIn(viewModelScope)
+
+
+         articlePagingDataFlow =
+             combine(
+                 getHeadlines,
+                 search,::Pair
+             ).map {(headline,search)->{
+                 getArticles(search.query,Constants.DEFULT_COUNTRY,"",headline.category)
+             }}.flatMapLatest {
+                 it.invoke()
+             }.cachedIn(viewModelScope)
 
 
 
@@ -66,11 +85,14 @@ class HomeViewModel @Inject constructor(
         state = combine(
             getHeadlines,
             queriesScrolled,
-            ::Pair
-        ).map { (headline, scroll) ->
+            search,
+            ::Triple
+        ).map { (headline, scroll,search) ->
             UiState(
                 category = headline.category,
-                lastQueryScrolled = scroll.currentCategory, headline.category!= scroll.currentCategory)
+                searchQuery =search.query ,
+                lastQueryScrolled = scroll.currentCategory, hasNotScrolledForCurrentCategory = headline.category!= scroll.currentCategory
+            )
         }
 
             .stateIn(
@@ -80,22 +102,31 @@ class HomeViewModel @Inject constructor(
             )
 
         onCategoryChange = { action ->
+            Log.e(TAG, "$action: ccc", )
+
             viewModelScope.launch { actionStateFlow.emit(action) }
         }
+
+        onSearchChange = { action ->
+            Log.e(TAG, "$action: sss", )
+            viewModelScope.launch { actionStateFlow.emit(action) }
+        }
+
     }
 
 
 
     private fun getArticles(
-        query: ApiQuery,
+        query: String,
         country: String?,
         language: String?,
-        category: String?): Flow<PagingData<UiModel>> =
-
-        repository.getArticles(
-            query, language =language,
+        category: String?): Flow<PagingData<UiModel>> {
+        Log.e(TAG, "getArticles:${query}and ${category} ", )
+       return repository.getArticles(
+            query,
+             language =language,
             category =category,
-            country = country).map {  pagingData ->
+            country = country).map { pagingData ->
               pagingData.map {
                   UiModel.ArticleItem(it) }}.map {
 
@@ -124,7 +155,7 @@ class HomeViewModel @Inject constructor(
 
 
 
-
+    }
 
     fun addToFavourite(articleUrl:String){
         viewModelScope.launch {
@@ -134,6 +165,7 @@ class HomeViewModel @Inject constructor(
     }
     override fun onCleared() {
         savedStateHandle[LAST_CATEGORY_SELECTED] = state.value.category
+        savedStateHandle[LAST_SEARCH_QUERY] = state.value.searchQuery
         savedStateHandle[LAST_QUERY_SCROLLED] = state.value.lastQueryScrolled
         super.onCleared()
     }

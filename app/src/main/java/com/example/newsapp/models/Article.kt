@@ -28,11 +28,12 @@ data class Article(
     @SerializedName("urlToImage")
     val urlToImage: String? = "",
     val isFavourite: Boolean = false,
-   val category :String=""
+   val category :String="",
+   val country :String=""
 )
 
 
-fun List<Article>.toDatabaseModel(category:String):List<Article> {
+fun List<Article>.toDatabaseModel(category:String,country :String):List<Article> {
     return map {
         Article(
             author = it.author,
@@ -44,7 +45,8 @@ fun List<Article>.toDatabaseModel(category:String):List<Article> {
             url = it.url,
             urlToImage = it.urlToImage,
             isFavourite = false,
-            category=category
+            category=category,
+            country = country
         )
     }
         .toMutableList()

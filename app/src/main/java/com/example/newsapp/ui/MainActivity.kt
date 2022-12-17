@@ -32,10 +32,12 @@ class MainActivity : AppCompatActivity() {
 
         navController.addOnDestinationChangedListener{ _,destination,_ ->
             when(destination.id){
-                R.id.onBoardingFragment,R.id.homeFragment-> {
+                R.id.onBoardingFragment,R.id.homeFragment,R.id.searchFragment-> {
                     supportActionBar?.hide()
 
 
+                }
+                R.id.favouriteFragment->{
                 }
                 else -> supportActionBar?.show()
             }

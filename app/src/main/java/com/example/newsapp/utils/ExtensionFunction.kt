@@ -4,6 +4,10 @@ import android.content.Context
 import com.example.newsapp.models.Category
 import com.example.newsapp.models.Country
 import com.google.gson.Gson
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.toList
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
@@ -26,6 +30,14 @@ fun <T:Any>readFromAsset(file_name:String,context: Context,model: KClass<T>): Li
 
      return modelList
 }
+
+
+
+
+
+
+
+
 
 fun dateFormat(date: String?): String? {
     val newDate: String?

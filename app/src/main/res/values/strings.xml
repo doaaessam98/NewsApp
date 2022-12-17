@@ -4,13 +4,35 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="selected_country">Selected Country</string>
     <string name="selected_category">Selected Ctegory</string>
-    <string name="category_hint">(at least 3 )</string>
+    <string name="category_hint">(at least 3 category )</string>
     <string name="next">Next</string>
     <string name="empty_category_message">please selecte favourite category</string>
     <string name="loading">loading</string>
     <string name="retry">try aging</string>
     <string name="no_results">no result</string>
-
+    <string name="favorite">favourite</string>
+    <string name="content_description_favorite">fav_screen</string>
+    <string name="search">search</string>
+    <string name="content_description_search">search_screen</string>
+    //category
+    <string name="general">general</string>
+    <string name="business">business</string>
+    <string name="entertainment">entertainment</string>
+    <string name="health">health</string>
+    <string name="science">science</string>
+    <string name="sports">sports</string>
+    <string name="technology">sports</string>
+    <string name="apply">apply</string>
+    <string name="search_hint">search here</string>
+    // countries
+<!--    <string name="general">general</string>-->
+<!--    <string name="business">business</string>-->
+<!--    <string name="entertainment">entertainment</string>-->
+<!--    <string name="health">health</string>-->
+<!--    <string name="science">science</string>-->
+<!--    <string name="sports">sports</string>-->
+<!--    <string name="technology">sports</string>-->
+<!--    -->
 
     <string-array name="countries_name_array">
         <item>Egypt</item>
