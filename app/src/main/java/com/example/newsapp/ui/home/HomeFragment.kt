@@ -23,15 +23,15 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.newsapp.R
 import com.example.newsapp.databinding.FilterBottomSheetBinding
 import com.example.newsapp.databinding.FragmentHomeBinding
-import com.example.newsapp.models.Category
-import com.example.newsapp.models.UiAction
-import com.example.newsapp.models.UiModel
-import com.example.newsapp.models.UiState
-import com.example.newsapp.ui.onBoarding.FIRST
+import com.example.newsapp.models.*
+import com.example.newsapp.ui.onBoarding.CustomDropDownAdapter
+import com.example.newsapp.ui.onBoarding.NOT_FIRST
 import com.example.newsapp.ui.onBoarding.FIRST_TIME
 import com.example.newsapp.ui.onBoarding.PREFERENCE_NAME
 import com.example.newsapp.utils.Constants
 import com.example.newsapp.utils.onclick
+import com.example.newsapp.utils.readFromAsset
+import com.example.newsapp.utils.toCategoryList
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.chip.Chip
 import com.google.gson.Gson
@@ -53,6 +53,7 @@ class HomeFragment : Fragment() {
   lateinit var binding: FragmentHomeBinding
   lateinit var categoryTabsAdapter: CategoryTabsAdapter
   lateinit var articleAdapter: ArticleAdapter
+    lateinit var  customDropDownAdapter:CustomDropDownAdapter
    private val viewModel:HomeViewModel by viewModels()
      var categoryList = listOf<Category>()
     var categories = mutableListOf<String>()
@@ -63,14 +64,12 @@ class HomeFragment : Fragment() {
         binding = FragmentHomeBinding.inflate(inflater)
         binding.lifecycleOwner = this
 
-        if(arguments?.getString(FIRST_TIME)!=FIRST){
-
-            categories =
-                HomeFragmentArgs.fromBundle(requireArguments()).selectedCategory?.toMutableList() ?:mutableListOf()
-                viewModel.selectedCategory = categories[0]
-              val country = HomeFragmentArgs.fromBundle(requireArguments()).selectedCpuntryCode
-                  Constants.DEFULT_COUNTRY =country!!
-                  savedDataInShared(categories, country)
+        if(arguments?.getString(FIRST_TIME)!=NOT_FIRST){
+            categories = HomeFragmentArgs.fromBundle(requireArguments()).selectedCategory?.toMutableList() ?:mutableListOf()
+            viewModel.selectedCategory = categories[0]
+            val country = HomeFragmentArgs.fromBundle(requireArguments()).selectedCpuntryCode
+            Constants.DEFULT_COUNTRY =country!!
+             savedDataInShared(categories, country)
            }else{
 
               getDataFromArgs()
@@ -83,7 +82,7 @@ class HomeFragment : Fragment() {
             uiActions = viewModel.onCategoryChange,
 
         )
-        setUpCategoriesView(articleAdapter,categories,onCategoryChanged = viewModel.onCategoryChange)
+        setUpCategoriesView(categories,onCategoryChanged = viewModel.onCategoryChange)
         setUpSearchView(uiActions = viewModel.onSearchChange)
         handelTopBarMenuItem()
         return binding.root
@@ -101,12 +100,10 @@ class HomeFragment : Fragment() {
     private fun getListFromShared(): MutableList<String> {
         sharedPreference  = requireActivity().getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE)
 
-        var list: MutableList<String> = mutableListOf()
+        var list: MutableList<String>
         val json: String = sharedPreference.getString(CATEGRORIES,"")!!
-
         val type: Type = object : TypeToken<ArrayList<String?>?>() {}.type
         list = Gson().fromJson<Any>(json, type) as MutableList<String>
-
         return list
 
     }
@@ -114,7 +111,6 @@ class HomeFragment : Fragment() {
         sharedPreference  = requireActivity().getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE)
         editor = sharedPreference.edit()
         val convertedData = Gson().toJson(categories)
-
         editor.putString(CATEGRORIES, convertedData).apply();
         editor.putString(COUNTRY,country)
     }
@@ -246,11 +242,10 @@ class HomeFragment : Fragment() {
 
     }
     private fun setUpCategoriesView(
-        articleAdapter: ArticleAdapter,
         categories: MutableList<String>,
         onCategoryChanged: (UiAction) -> Unit
     ) {
-         categoryList = convert_ListOfString_To_ListOfCategory(categories)
+         categoryList = categories.toCategoryList()
            categoryList.forEach {
                if( it.name==viewModel.selectedCategory){
                    it.isSelected=true
@@ -268,13 +263,7 @@ class HomeFragment : Fragment() {
 
 
     }
-    private fun convert_ListOfString_To_ListOfCategory(categories: List<String>): List<Category> {
-        var categoryList:List<Category> = listOf()
-        categories.forEach {
-             categoryList =  categoryList.plus(Category(it,""))
-        }
-        return categoryList
-    }
+
     private fun handelTopBarMenuItem(){
 
         binding.topAppBar.setOnMenuItemClickListener { menuItem ->
@@ -353,20 +342,23 @@ class HomeFragment : Fragment() {
         val bindingBottom = FilterBottomSheetBinding.bind(view)
         bindingBottom.root
         bottomSheet.setContentView(view)
+        setUpSpinner(bindingBottom)
+
         bottomSheet.show()
 
         var type :String = viewModel.selectedCategory
 
         bindingBottom.chipGroupCategory.setOnCheckedChangeListener { group, selectedChipId ->
             type = group.findViewById<Chip>(selectedChipId).text.toString()
-            categoryList.plus(Category(type,""))
-            categoryTabsAdapter.submitList(categoryList)
+
         }
 
 
         bindingBottom.btnApply.setOnClickListener {
             if(binding.searchNews.text.toString().isNotEmpty()){
                updateHeadlineListFromInput(type,onCategoryChanged)
+                categoryList = categoryList.plus(Category(type,""))
+                categoryTabsAdapter.submitList(categoryList)
             }else{
                 Toast.makeText(requireContext(), "please enter text to Search about", Toast.LENGTH_SHORT).show()
             }
@@ -375,7 +367,16 @@ class HomeFragment : Fragment() {
 
 
     }
+    private fun setUpSpinner(bindingBottom: FilterBottomSheetBinding) {
+        val modelList: List<Country>?= readFromAsset("Countries.json",requireContext(),
+            Country::class)
+        customDropDownAdapter = CustomDropDownAdapter(modelList)
+        bindingBottom.searchSpinnerCountry.apply {
+            adapter=customDropDownAdapter
 
+        }
+     Constants.DEFULT_COUNTRY= (bindingBottom.searchSpinnerCountry.selectedItem as Country).code
+    }
     override fun onStart() {
         super.onStart()
         binding.searchNews.text.clear()

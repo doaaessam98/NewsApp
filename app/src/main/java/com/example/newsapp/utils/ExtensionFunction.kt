@@ -34,7 +34,13 @@ fun <T:Any>readFromAsset(file_name:String,context: Context,model: KClass<T>): Li
 
 
 
-
+ fun List<String>.toCategoryList(): List<Category> {
+    var categoryList:List<Category> = listOf()
+    this.forEach {
+        categoryList =  categoryList.plus(Category(it,""))
+    }
+    return categoryList
+}
 
 
 

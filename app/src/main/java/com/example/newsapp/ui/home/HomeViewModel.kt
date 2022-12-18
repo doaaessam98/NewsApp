@@ -32,15 +32,11 @@ class HomeViewModel @Inject constructor(
 ):ViewModel() {
 
 
-   // val topHeadlinesFlow  : StateFlow<PagingData<UiModel>>
     var selectedCategory :String
     val state :StateFlow<UiState>
     val articlePagingDataFlow: Flow<PagingData<UiModel>>
     val onCategoryChange: (UiAction) -> Unit
     val onSearchChange:(UiAction)->Unit
-
-
-
 
 
     init {
@@ -102,13 +98,10 @@ class HomeViewModel @Inject constructor(
             )
 
         onCategoryChange = { action ->
-            Log.e(TAG, "$action: ccc", )
-
             viewModelScope.launch { actionStateFlow.emit(action) }
         }
 
         onSearchChange = { action ->
-            Log.e(TAG, "$action: sss", )
             viewModelScope.launch { actionStateFlow.emit(action) }
         }
 

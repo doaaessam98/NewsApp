@@ -19,7 +19,7 @@ import com.example.newsapp.utils.translationXAnimation
 import com.example.newsapp.databinding.FragmentOnBoardingBinding
 const val PREFERENCE_NAME = "shard_name"
 const val FIRST_TIME = "first_time"
-const val FIRST="first"
+const val NOT_FIRST="not_first"
 class OnBoardingFragment : Fragment() {
    lateinit var  binding: FragmentOnBoardingBinding
     lateinit var   sharedPreference  : SharedPreferences
@@ -140,7 +140,7 @@ class OnBoardingFragment : Fragment() {
         if(this::sharedPreference.isInitialized) {
             if(sharedPreference.getBoolean(FIRST_TIME, false)) {
                 val b=Bundle()
-                b.putString(FIRST_TIME, FIRST)
+                b.putString(FIRST_TIME, NOT_FIRST)
                 findNavController().navigate(R.id.action_onBoardingFragment_to_homeFragment,b)
             }
         }

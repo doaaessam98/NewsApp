@@ -68,7 +68,7 @@
                     <com.google.android.material.chip.Chip
                         android:id="@+id/health_chip"
                         style="@style/CustomChipStyle"
-                        android:text="@string/health"
+                        android:text="@string/technology"
                         android:textSize="16sp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content" />

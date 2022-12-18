@@ -2,6 +2,7 @@ package com.example.newsapp.ui.onBoarding
 
 
 
+import android.annotation.SuppressLint
 import android.content.ContentValues.TAG
 import android.content.Context
 import android.util.Log
@@ -20,6 +21,7 @@ class CustomDropDownAdapter(var dataSource: List<Country>?) : BaseAdapter() {
 
 
 
+    @SuppressLint("SuspiciousIndentation")
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
 
        val holder:ItemHolder
