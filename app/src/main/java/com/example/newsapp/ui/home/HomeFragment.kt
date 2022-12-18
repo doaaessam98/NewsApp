@@ -376,13 +376,14 @@ class HomeFragment : Fragment() {
 
     }
 
-
-    override fun onStop() {
-        super.onStop()
+    override fun onStart() {
+        super.onStart()
         binding.searchNews.text.clear()
         binding.topAppBar.visibility=View.VISIBLE
         binding.searchViewLayout.visibility=View.GONE
+
     }
+
 
 
 
