@@ -1,6 +1,8 @@
 package com.example.newsapp.ui.home
 
 import android.content.ContentValues.TAG
+import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -25,32 +27,57 @@ import com.example.newsapp.models.Category
 import com.example.newsapp.models.UiAction
 import com.example.newsapp.models.UiModel
 import com.example.newsapp.models.UiState
+import com.example.newsapp.ui.onBoarding.FIRST
+import com.example.newsapp.ui.onBoarding.FIRST_TIME
+import com.example.newsapp.ui.onBoarding.PREFERENCE_NAME
 import com.example.newsapp.utils.Constants
 import com.example.newsapp.utils.onclick
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.chip.Chip
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import java.util.*
+import java.lang.reflect.Type
 
+
+const val PREFERENCE_NAME = "home_shard_name"
+const val CATEGRORIES = "categories"
+const val COUNTRY = "country"
 @AndroidEntryPoint
 class HomeFragment : Fragment() {
-
+    lateinit var   sharedPreference  : SharedPreferences
+    lateinit var editor: SharedPreferences.Editor
   lateinit var binding: FragmentHomeBinding
   lateinit var categoryTabsAdapter: CategoryTabsAdapter
   lateinit var articleAdapter: ArticleAdapter
    private val viewModel:HomeViewModel by viewModels()
      var categoryList = listOf<Category>()
+    var categories = mutableListOf<String>()
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentHomeBinding.inflate(inflater)
         binding.lifecycleOwner = this
-         val categories  =HomeFragmentArgs.fromBundle(requireArguments()).selectedCategory.toMutableList()
-          viewModel.selectedCategory = categories[0]
-          Constants.DEFULT_COUNTRY =HomeFragmentArgs.fromBundle(requireArguments()).selectedCpuntryCode
-           setUpArticleRecycleViewState(
+
+        if(arguments?.getString(FIRST_TIME)!=FIRST){
+
+            categories =
+                HomeFragmentArgs.fromBundle(requireArguments()).selectedCategory?.toMutableList() ?:mutableListOf()
+                viewModel.selectedCategory = categories[0]
+              val country = HomeFragmentArgs.fromBundle(requireArguments()).selectedCpuntryCode
+                  Constants.DEFULT_COUNTRY =country!!
+                  savedDataInShared(categories, country)
+           }else{
+
+              getDataFromArgs()
+        }
+
+
+        setUpArticleRecycleViewState(
             uiState = viewModel.state,
             pagingData = viewModel.articlePagingDataFlow,
             uiActions = viewModel.onCategoryChange,
@@ -62,7 +89,35 @@ class HomeFragment : Fragment() {
         return binding.root
     }
 
+    private fun getDataFromArgs() {
+        categories =getListFromShared()
+                viewModel.selectedCategory = categories[0]
+                 Constants.DEFULT_COUNTRY =sharedPreference.getString(CATEGRORIES,"" )!!
 
+
+
+
+    }
+    private fun getListFromShared(): MutableList<String> {
+        sharedPreference  = requireActivity().getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE)
+
+        var list: MutableList<String> = mutableListOf()
+        val json: String = sharedPreference.getString(CATEGRORIES,"")!!
+
+        val type: Type = object : TypeToken<ArrayList<String?>?>() {}.type
+        list = Gson().fromJson<Any>(json, type) as MutableList<String>
+
+        return list
+
+    }
+    private fun savedDataInShared(categories: MutableList<String>, country: String) {
+        sharedPreference  = requireActivity().getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE)
+        editor = sharedPreference.edit()
+        val convertedData = Gson().toJson(categories)
+
+        editor.putString(CATEGRORIES, convertedData).apply();
+        editor.putString(COUNTRY,country)
+    }
 
 
     private fun   setUpArticleRecycleViewState(
@@ -285,6 +340,7 @@ class HomeFragment : Fragment() {
     }
     private fun setUpBackButtonInSearch() {
         binding.btnBack.onclick {
+            binding.searchNews.text.clear()
             binding.topAppBar.visibility=View.VISIBLE
             binding.searchViewLayout.visibility=View.GONE
 
@@ -321,7 +377,12 @@ class HomeFragment : Fragment() {
     }
 
 
-
+    override fun onStop() {
+        super.onStop()
+        binding.searchNews.text.clear()
+        binding.topAppBar.visibility=View.VISIBLE
+        binding.searchViewLayout.visibility=View.GONE
+    }
 
 
 

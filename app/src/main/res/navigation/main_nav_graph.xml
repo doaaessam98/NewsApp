@@ -23,10 +23,14 @@
         tools:layout="@layout/fragment_home" >
         <argument
             android:name="SelectedCpuntryCode"
-            app:argType="string" />
+            app:argType="string"
+            app:nullable="true"
+           />
         <argument
             android:name="selectedCategory"
-            app:argType="string[]" />
+            app:argType="string[]"
+            app:nullable="true"
+           />
         <action
             android:id="@+id/action_homeFragment_to_favouriteFragment"
             app:destination="@id/favouriteFragment" />

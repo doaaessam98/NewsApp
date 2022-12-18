@@ -2,7 +2,7 @@ package com.example.newsapp.utils
 
 object Constants {
     var DEFAULT_CATEGORY: String = "general"
-    var DEFULT_COUNTRY :String = ""
+    var DEFULT_COUNTRY :String = "eg"
     var DEFAULT_SEARCH_QUERY =""
     const val SORT_BY: String = "publishedAt"
     const val DEFAULT_LANG: String ="US"

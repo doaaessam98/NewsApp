@@ -11,14 +11,15 @@ import android.widget.Toast
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.newsapp.R
-import com.example.newsapp.databinding.FragmentOnBoardingBinding
 import com.example.newsapp.models.Category
 import com.example.newsapp.models.Country
 import com.example.newsapp.utils.onclick
 import com.example.newsapp.utils.readFromAsset
 import com.example.newsapp.utils.translationXAnimation
+import com.example.newsapp.databinding.FragmentOnBoardingBinding
 const val PREFERENCE_NAME = "shard_name"
 const val FIRST_TIME = "first_time"
+const val FIRST="first"
 class OnBoardingFragment : Fragment() {
    lateinit var  binding: FragmentOnBoardingBinding
     lateinit var   sharedPreference  : SharedPreferences
@@ -87,7 +88,7 @@ class OnBoardingFragment : Fragment() {
                  navigateToHomeScreen()
              }
 
-    
+
     }
 
 
@@ -119,11 +120,10 @@ class OnBoardingFragment : Fragment() {
 
     private fun navigateToHomeScreen() {
         saveInShard()
-        val  selectedCountryCode :String = (binding.spinner.selectedItem as Country).code
+        val  selectedCountryCode :String= (binding.spinner.selectedItem as Country).code
         val categories : Array<String> = selectedCategoryList.toTypedArray()
         val action = OnBoardingFragmentDirections.actionOnBoardingFragmentToHomeFragment(selectedCountryCode,categories)
       findNavController().navigate(action)
-
 
 
     }
@@ -133,13 +133,15 @@ class OnBoardingFragment : Fragment() {
      }
     private fun saveInShard() {
         editor.putBoolean(FIRST_TIME,true)
-        editor.commit()
+        editor.apply()
     }
 
     private fun isFirstTime() {
         if(this::sharedPreference.isInitialized) {
             if(sharedPreference.getBoolean(FIRST_TIME, false)) {
-                findNavController().navigate(R.id.action_onBoardingFragment_to_homeFragment)
+                val b=Bundle()
+                b.putString(FIRST_TIME, FIRST)
+                findNavController().navigate(R.id.action_onBoardingFragment_to_homeFragment,b)
             }
         }
     }

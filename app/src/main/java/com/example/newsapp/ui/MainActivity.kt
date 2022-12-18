@@ -37,8 +37,7 @@ class MainActivity : AppCompatActivity() {
 
 
                 }
-                R.id.favouriteFragment->{
-                }
+
                 else -> supportActionBar?.show()
             }
         }
